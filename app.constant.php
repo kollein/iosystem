@@ -1,0 +1,3 @@
+<?php
+const NOLONGERNIGHT = 'NO LONGER NIGHT';
+?>
