@@ -28,7 +28,7 @@ RewriteRule ^xhr/([a-z]+)/([a-z\_]+)/$ xhr/$1/$2.php [QSA,L,NC]
 # ---------------------------------------------
 
 # DEFAULT : HOME : ROUTE
-RewriteRule ^/?$ index.php?route=home [QSA,L]
+# RewriteRule ^/?$ index.php?route=home [QSA,L]
 
 # ROUTE : LEVEL 0 : domain.com/route/
 RewriteRule ^([a-z0-9\-]+)/?$ index.php?route=$1&route_level=0 [QSA,L,NC]

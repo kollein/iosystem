@@ -7,13 +7,13 @@
 include 'app-routing.config.php';
 
 $_route_uri = $_GET['route'];
-$_explicit_uri = $_GET['explicit'];
+$_explicit_uri = trimForwardSlash($_GET['explicit']);
 $_route_level_uri = $_GET['route_level'];
-$path = $_route_uri . ($_explicit_uri ? '/' . $_explicit_uri : '');
+$_path_uri = $_route_uri . ($_explicit_uri ? '/' . $_explicit_uri : '');
+
+$route = Route::getRoute($_path_uri, $_SERVER['REQUEST_METHOD']);
 
 include './unit-test/app.adapter.01.php';
-
-$route = Route::getRoute($path, $_SERVER['REQUEST_METHOD']);
 
 if ($route) {
     /*
