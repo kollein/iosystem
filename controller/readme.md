@@ -1,8 +1,10 @@
 ### STRUCTURE:
 
 controller        [folder]
--- name           [folder]
-   -- class       [file.php]
+
+  -- name           [folder]
+
+    -- class       [file.php]
 
 
 ### EXPLAINS:
