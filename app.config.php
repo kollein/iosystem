@@ -2,8 +2,7 @@
 
 // error_reporting(0);
 date_default_timezone_set('UTC');
-$conn = new PDO('mysql:host=localhost;dbname=iosystem','root','12345678');
-
+$conn = new PDO('mysql:host=localhost;dbname=iosystem', 'root', '12345678');
 
 // error_reporting(0);
 // date_default_timezone_set("Asia/Bangkok");
@@ -15,13 +14,16 @@ $conn->query("SET SESSION time_zone = '+7:00'");
 
 /* FULL CURRENT URL */
 // Get HTTP/HTTPS (the possible values for this vary from server to server)
-$myUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && !in_array(strtolower($_SERVER['HTTPS']),array('off','no'))) ? 'https' : 'http';
+$myUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && !in_array(strtolower($_SERVER['HTTPS']), array('off', 'no'))) ? 'https' : 'http';
 // Get domain portion
-$myUrl .= '://'.$_SERVER['HTTP_HOST'];
+$myUrl .= '://' . $_SERVER['HTTP_HOST'];
 // Get path to script
 $myUrl .= $_SERVER['REQUEST_URI'];
 // Add path info, if any
-if (!empty($_SERVER['PATH_INFO'])) $myUrl .= $_SERVER['PATH_INFO'];
+if (!empty($_SERVER['PATH_INFO'])) {
+    $myUrl .= $_SERVER['PATH_INFO'];
+}
+
 /* END FULL CURRENT URL */
 
 /* ENVIROMENT FOR GET DATA */
@@ -57,12 +59,11 @@ const USER_CACHE = 'USER_CACHE';
 define(USER_COOKIE, $_COOKIE['u']);
 
 // TIME DATE
-define( _TIMESTAMP, date('Y-m-d H:i') );
+define(_TIMESTAMP, date('Y-m-d H:i'));
 // ROOT_DIR :
-define( 'ROOT_DIR', dirname(__FILE__) );
+define('ROOT_DIR', dirname(__FILE__));
 // UPLOADER DESTINATION
 const PATH_URI_PX_UPLOAD_DES = URLBASE;
 const IMG_CDN = '/img/cdn1';
 const IMG_CDN_REAL_PHOTO = '/img/cdn-rp';
 const IMG_CDN_EDITOR = '/img/cdn1_Editor';
-?>

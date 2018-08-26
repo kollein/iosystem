@@ -15,46 +15,29 @@ class Route
 
     }
 
-    public static function post($path, $mixedCA, $privileges)
+    public static function post($path, $mixedCA, $middleware = false)
+    {
+        self::setRoute($path, $mixedCA, $middleware, 'POST');
+    }
+
+    public static function get($path, $mixedCA, $middleware = false)
+    {
+        self::setRoute($path, $mixedCA, $middleware, 'GET');
+    }
+
+    protected static function setRoute($path, $mixedCA, $middleware, $method)
     {
         if (self::isValidPath($path) && self::isValidController($mixedCA)) {
             $route = [
-                "METHOD" => 'POST',
+                "METHOD" => $method,
                 "PATH" => $path,
                 "CONTROLLER" => $mixedCA,
-                "PRIVILEGES" => $privileges,
+                "MIDDLEWARE" => $middleware,
             ];
 
-            array_push(self::$_routes['POST'], $route);
+            array_push(self::$_routes[$method], $route);
         }
 
-    }
-
-    public static function get($path, $mixedCA, $privileges)
-    {
-        if (self::isValidPath($path) && self::isValidController($mixedCA)) {
-            $route = [
-                "METHOD" => 'GET',
-                "PATH" => $path,
-                "CONTROLLER" => $mixedCA,
-                "PRIVILEGES" => $privileges,
-            ];
-
-            array_push(self::$_routes['GET'], $route);
-        }
-
-    }
-
-    public static function isExistRoute($path, $method)
-    {
-        $result = false;
-
-        foreach (self::$_routes[$method] as $route) {
-            $result = $route['PATH'] === $path ? true : false;
-            break;
-        }
-
-        return $result;
     }
 
     public static function getRoute($path, $method)
@@ -62,8 +45,12 @@ class Route
         $result = false;
 
         foreach (self::$_routes[$method] as $route) {
-            $result = $route['PATH'] === $path ? $route : false;
-            break;
+
+            if ($route['PATH'] === $path) {
+                $result = $route;
+                break;
+            }
+
         }
 
         return $result;
@@ -76,6 +63,6 @@ class Route
 
     public static function isValidController($mixed)
     {
-        return preg_match("|^[a-z]+@[a-z]+$|i", $mixed) ? true : false;
+        return preg_match("|^[a-z]+@[a-z0-9]+$|i", $mixed) ? true : false;
     }
 }

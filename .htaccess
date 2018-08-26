@@ -9,6 +9,10 @@ RewriteBase /
 # RewriteCond %{HTTP_HOST} ^iosystem\.com$ [NC]
 # RewriteRule ^(.*)$ http://www.iosystem.com/$1 [R=301,L]
 
+# SUB-DOMAIN
+# RewriteCond %{HTTP_HOST} ^apis\.iosystem\.com$ [NC]
+# RewriteRule ^((?!sub1/).*)$ /sub1/$1 [L,NC]
+
 # XHR TARGET ************************************************
 
 #hide extensions when call XHR .php
@@ -18,6 +22,10 @@ RewriteRule ^xhr/([a-z]+)/([a-z\_]+)/$ xhr/$1/$2.php [QSA,L,NC]
 # PAGE TARGET ************************************************
 # use ^([a-z]*) prevent duplicating with : ^(.*)$ http://www.domain.com/$1 [R=301,L]
 # domain.com/about or has forward slash after "about/" valid rule
+
+# ---------------------------------------------
+# [?route]: route-name same as controller-name
+# ---------------------------------------------
 
 # DEFAULT : HOME : ROUTE
 RewriteRule ^/?$ index.php?route=home [QSA,L]

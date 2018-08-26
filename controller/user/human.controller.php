@@ -2,7 +2,7 @@
 
 namespace controller\user;
 
-class IndexController
+class HumanController
 {
 
     public $_name = 'asdsad';
@@ -12,7 +12,7 @@ class IndexController
         $this->_name = 'vinh';
     }
 
-    public function index()
+    public function index1()
     {
         return $this->_name;
     }

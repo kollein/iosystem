@@ -8,16 +8,14 @@ class Adapter
 
     }
 
-    public static function getController($mixed)
+    public static function getAddressFirst($mixed)
     {
-        $stack_mixed = explode('@', $mixed);
-        return $stack_mixed[0];
+        return explode('@', $mixed)[0];
     }
 
-    public static function getAction($mixed)
+    public static function getAddressLast($mixed)
     {
-        $stack_mixed = explode('@', $mixed);
-        return $stack_mixed[1];
+        return explode('@', $mixed)[1];
     }
 
 }

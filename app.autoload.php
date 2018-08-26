@@ -9,7 +9,8 @@ function __autoload($class)
 {
     $stack_class = explode('\\', strtolower($class));
     $store_name = $stack_class[0];
-    print_r($stack_class);
+
+    include './unit-test/app.autoload.01.php';
 
     switch ($store_name) {
         case 'route':
@@ -19,15 +20,18 @@ function __autoload($class)
             $ready_path = 'module/adapter.module.php';
             break;
         case 'controller':
-            $ready_path = 'controller/user/index.controller.php';
+            $ready_path = $store_name . '/' . $stack_class[1] . '/' . str_replace('controller', '.controller', $stack_class[2]) . '.php';
+            break;
+        case 'middleware':
+            $ready_path = $store_name . '/' . $stack_class[1] . '.middleware.php';
             break;
 
         default:
-            $ready_path = $store_name . '/' . $stack_class[1] . '.' . $store_name . '.php';
+            $ready_path = '404.php';
             break;
     }
 
-    echo 'Path: ' . $ready_path;
+    include './unit-test/app.autoload.02.php';
 
     require_once $ready_path;
 }

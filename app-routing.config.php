@@ -1,11 +1,12 @@
 <?php
 /*
  ** Router
- ** :: Method [POST, GET, PUT, DELETE]
- ** :: Path 'abc'
- ** :: Controller - Action 'index@index'
- ** :: Privileges Level [admin, member, guest]
+ ** :: Method                  [POST, GET, PUT, DELETE]
+ ** :: Path                    'abc'
+ ** :: Controller - Action     'index@index'
+ ** :: MiddleWare - Action     'user@checkLogin'
  */
 
-Route::get('user/info', 'index@index', 'member');
-Route::post('getcoin', 'index@index', 'admin');
+Route::get('user/info', 'human@index1', 'user@checkLogin');
+Route::get('user/info1', 'human@index1');
+Route::post('user', 'index@index', 'user@checkPower');
