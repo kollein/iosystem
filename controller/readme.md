@@ -2,9 +2,9 @@
 
 controller        [folder]
 
-  -- name           [folder]
+-- name           [folder]
 
-    -- class       [file.php]
+---- class       [file.php]
 
 
 ### EXPLAINS:
