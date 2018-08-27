@@ -12,12 +12,12 @@ Route::prefix('user')->group(function () {
     // Route::post('kollein/id', 'human@index1');
 });
 
-// Route::get('user/info', 'human@index1', 'user@checkLogin');
+Route::get('user/info', 'humancontroller@index1', 'usermiddleware@checkLogin');
 
-Route::get('user/{id}', function () {
+// Route::get('user/{id}', function () {
 
-    return ['controller' => 'human@index1', 'middleware' => 'user@checkLogin'];
+//     return ['controller' => 'human@index1', 'middleware' => 'user@checkLogin'];
 
-})->where(['id' => '[0-9]+']);
+// })->where(['id' => '[0-9]+']);
 
 // Route::post('user', 'index@index', 'user@checkPower');

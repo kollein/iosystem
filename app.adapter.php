@@ -31,8 +31,8 @@ if ($route) {
     } else {
 
         // Invoke MiddleWare Task
-        $middleware_name = Adapter::getAddressFirst($route['MIDDLEWARE']);
-        $middleware_action_name = Adapter::getAddressLast($route['MIDDLEWARE']);
+        $middleware_name = Adapter::getAddressBefore($route['MIDDLEWARE']);
+        $middleware_action_name = Adapter::getAddressAfter($route['MIDDLEWARE']) . 'Action';
         $middleware_namespace = 'middleware\\' . $middleware_name;
         $middleware_class_name = $middleware_namespace . '\\' . $middleware_name;
 
@@ -45,10 +45,10 @@ if ($route) {
     // Check Authorization Result
     if ($authorized['code'] === 1) {
 
-        $controller_name = Adapter::getAddressFirst($route['CONTROLLER']);
-        $controller_action_name = Adapter::getAddressLast($route['CONTROLLER']);
+        $controller_name = Adapter::getAddressBefore($route['CONTROLLER']);
+        $controller_action_name = Adapter::getAddressAfter($route['CONTROLLER']) . 'Action';
         $controller_namespace = 'controller\\' . $_route_uri;
-        $controller_class_name = $controller_namespace . '\\' . $controller_name . 'controller';
+        $controller_class_name = $controller_namespace . '\\' . $controller_name;
 
         $_OPERATOR_ = new $controller_class_name();
         echo $_OPERATOR_->$controller_action_name();

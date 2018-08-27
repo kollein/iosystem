@@ -20,10 +20,20 @@ function __autoload($class)
             $ready_path = 'module/adapter.module.php';
             break;
         case 'controller':
-            $ready_path = $store_name . '/' . $stack_class[1] . '/' . str_replace('controller', '.controller', $stack_class[2]) . '.php';
+            /*
+             ** $stack_class[1] : is context
+             ** $stack_class[2] : is controller-name and is also (class-name)
+             ** File Name Set-Rule  :
+             ** ex: class IndexController {}
+             ** That file-name must be (index.controller.php)
+             */
+            $ready_path = $store_name . '/' . $stack_class[1] . '/' . preg_replace('|controller$|', '', $stack_class[2]) . '.controller.php';
             break;
         case 'middleware':
-            $ready_path = $store_name . '/' . $stack_class[1] . '.middleware.php';
+            /*
+             ** $stack_class[1] : is middleware-name and is also (class-name)
+             */
+            $ready_path = $store_name . '/' . preg_replace('|middleware$|', '', $stack_class[1]) . '.middleware.php';
             break;
 
         default:

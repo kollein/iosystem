@@ -2,7 +2,7 @@
 
 /*
  ** Glossary:
- ** 1. Node Syntax: is combination between class and method of its
+ ** 1. Node Syntax: is combination between class and method name
  ** and to be separated by @ sign
  ** ex: indexcontroller@index
  */
@@ -10,6 +10,8 @@
 class Route
 {
     const DEFAULT_C_NODE_SYNTAX = 'indexcontroller@index';
+    const C_NODE_SYNTAX_PATTERN = '|^[a-z]+[0-9]*controller@[a-z]+[0-9]*$|i';
+    const M_NODE_SYNTAX_PATTERN = '|^[a-z]+[0-9]*middleware@[a-z]+[0-9]*$|i';
 
     // When a route is initialized
     public static $_prefix = false;
@@ -41,47 +43,57 @@ class Route
 
     public static function get($path, $controller_node_syntax = DEFAULT_C_NODE_SYNTAX, $middleware_node_syntax = false)
     {
-        $path = strtolower($path);
+        self::$_method = strtoupper(__FUNCTION__);
+        self::prepareRoute($path, $controller_node_syntax, $middleware_node_syntax);
 
         if (gettype($controller_node_syntax) === 'object') {
 
             /*
              ** $controller_node_syntax is callback now and return data, so it has two-way binding mechanism
-             ** Data is null (not return) or an array which to be defined:
+             ** Data is null (not return) or an array (return) which to be defined:
              ** [0]: string : 'controller@action'
              ** [1]: string : 'middleware@action'
              */
             self::cacheCallbackData($controller_node_syntax());
 
-            // cache $path
-            self::$_path = $path;
-            self::$_method = strtoupper(__FUNCTION__);
-
             return new self;
 
         } else {
-
-            self::setRoute($path, $controller_node_syntax, $middleware_node_syntax, 'GET');
+            echo 'not object';
+            self::setRoute();
 
         }
     }
 
-    protected static function setRoute($path, $controller_node_syntax, $middleware_node_syntax, $method)
+    protected function prepareRoute($path, $controller_node_syntax, $middleware_node_syntax)
     {
-        echo '<br><br><br>VINHNRE' . $controller_node_syntax . '<br><br><br>';
-        if (self::isValidPath($path) && self::isValidController($controller_node_syntax)) {
+        $path = strtolower($path);
 
-            $path = trimForwardSlash($path);
+        // cache
+        self::$_path = $path;
+        self::$_controller_node_syntax = self::isControllerNodeSyntax($controller_node_syntax) ? $controller_node_syntax : self::DEFAULT_C_NODE_SYNTAX;
+        self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : false;
+    }
+
+    protected function setRoute()
+    {
+        echo '<br><br><br>VINHNRE' . self::$_controller_node_syntax . '<br><br><br>';
+
+        if (self::isValidPath(self::$_path) &&
+            self::isControllerNodeSyntax(self::$_controller_node_syntax)
+        ) {
+
+            $path = trimForwardSlash(self::$_path);
             $ready_path = self::$_prefix ? self::$_prefix . '/' . $path : $path;
 
             $route = [
-                "METHOD" => $method,
+                "METHOD" => self::$_method,
                 "PATH" => $ready_path,
-                "CONTROLLER" => $controller_node_syntax,
-                "MIDDLEWARE" => $middleware_node_syntax,
+                "CONTROLLER" => self::$_controller_node_syntax,
+                "MIDDLEWARE" => self::$_middleware_node_syntax,
             ];
 
-            array_push(self::$_routes[$method], $route);
+            array_push(self::$_routes[self::$_method], $route);
         }
 
     }
@@ -95,7 +107,7 @@ class Route
 
         foreach (self::$_routes[$method] as $route) {
 
-            if ($route['PATH'] === $path) {
+            if ($route['PATH'] === self::$_path_uri) {
                 $result = $route;
                 break;
             }
@@ -105,14 +117,19 @@ class Route
         return $result;
     }
 
-    public static function isValidPath($path)
+    protected function isValidPath($path)
     {
-        return preg_match("|^[^'\"]+$|i", $path) ? true : false;
+        return preg_match("|^[^'\"]+$|i", $path);
     }
 
-    public static function isValidController($mixed)
+    protected function isControllerNodeSyntax($mixed)
     {
-        return preg_match("|^[a-z]+@[a-z0-9]+$|i", $mixed) ? true : false;
+        return gettype($mixed) !== 'string' ? false : preg_match(self::C_NODE_SYNTAX_PATTERN, $mixed);
+    }
+
+    protected function isMiddlewareNodeSyntax($mixed)
+    {
+        return gettype($mixed) !== 'string' ? false : preg_match(self::M_NODE_SYNTAX_PATTERN, $mixed);
     }
 
     public static function prefix($path)
@@ -130,15 +147,15 @@ class Route
 
     public function where($condition)
     {
-        $merged_path = join('/', self::mergeCondition($condition));
+        // $_path: has been merged with condition
+        self::$_path = join('/', self::mergeCondition($condition));
 
         echo self::$_method . '<br>';
         echo self::$_path . '<br>';
-        echo $merged_path . '<br>';
         echo self::$_controller_node_syntax . '<br>';
         echo self::$_middleware_node_syntax . '<br>';
 
-        self::setRoute($merged_path, self::$_controller_node_syntax, self::$_middleware_node_syntax, self::$_method);
+        self::setRoute();
 
     }
 
@@ -166,21 +183,14 @@ class Route
         return $result;
     }
 
-    public function isNodeSyntax($mixed)
-    {
-
-        return preg_match("|^[a-z]+@[a-z0-9]+$|i", $mixed) ? true : false;
-
-    }
-
     protected function cacheCallbackData($data)
     {
 
         if ($data !== null) {
 
-            self::$_controller_node_syntax = self::isNodeSyntax($data['controller']) ? $data['controller'] : DEFAULT_C_NODE_SYNTAX;
+            self::$_controller_node_syntax = self::isControllerNodeSyntax($data['controller']) ? $data['controller'] : self::DEFAULT_C_NODE_SYNTAX;
 
-            self::$_middleware_node_syntax = self::isNodeSyntax($data['controller']) ? $data['middleware'] : false;
+            self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($data['middleware']) ? $data['middleware'] : false;
         }
     }
 

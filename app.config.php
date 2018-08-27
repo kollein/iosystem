@@ -62,7 +62,7 @@ define(USER_COOKIE, $_COOKIE['u']);
 define(_TIMESTAMP, date('Y-m-d H:i'));
 // ROOT_DIR :
 define('ROOT_DIR', dirname(__FILE__));
-// UPLOADER DESTINATION
+// UPLOAD DESTINATION
 const PATH_URI_PX_UPLOAD_DES = URLBASE;
 const IMG_CDN = '/img/cdn1';
 const IMG_CDN_REAL_PHOTO = '/img/cdn-rp';

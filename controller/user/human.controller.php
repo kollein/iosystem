@@ -12,7 +12,7 @@ class HumanController
         $this->_name = 'vinh';
     }
 
-    public function index1()
+    public function index1Action()
     {
         return $this->_name;
     }

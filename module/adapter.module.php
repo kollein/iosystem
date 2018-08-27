@@ -8,12 +8,12 @@ class Adapter
 
     }
 
-    public static function getAddressFirst($mixed)
+    public static function getAddressBefore($mixed)
     {
         return explode('@', $mixed)[0];
     }
 
-    public static function getAddressLast($mixed)
+    public static function getAddressAfter($mixed)
     {
         return explode('@', $mixed)[1];
     }

@@ -1,19 +1,19 @@
 <?php
 
-namespace middleware\user;
+namespace middleware\usermiddleware;
 
-class User
+class UserMiddleware
 {
     public $_name = 'User MiddleWare';
 
-    public function checkLogin()
+    public function checkLoginAction()
     {
         $authorized['code'] = 1;
         $authorized['message'] = 'Ok, You has logged!';
         return $authorized;
     }
 
-    public function checkPower()
+    public function checkPowerAction()
     {
         $authorized['code'] = 1;
         $authorized['message'] = 'Ok, You have enough power!';
