@@ -8,16 +8,24 @@
  */
 
 Route::prefix('user')->group(function () {
-    // Route::get('info2', 'human@index1');
+    Route::get('info', 'humancontroller@index1', 'usermiddleware@checkLogin');
     // Route::post('kollein/id', 'human@index1');
 });
 
-Route::get('user/info', 'humancontroller@index1', 'usermiddleware@checkLogin');
+// Route::get('user/info', 'humancontroller@index1', 'usermiddleware@checkLogin');
+
+// Route::post('agent/{name}', function () {
+
+//     return ['controller' => 'humancontroller@index1',
+//         'middleware' => 'usermiddleware@checkLogin'];
+
+// })->where(['name' => '[a-z]+']);
 
 // Route::get('user/{id}', function () {
 
-//     return ['controller' => 'human@index1', 'middleware' => 'user@checkLogin'];
+//     return ['controller' => 'humancontroller@index1',
+//         'middleware' => 'usermiddleware@checkLogin'];
 
 // })->where(['id' => '[0-9]+']);
 
-// Route::post('user', 'index@index', 'user@checkPower');
+include './unit-test/app-routing.config.01.php';

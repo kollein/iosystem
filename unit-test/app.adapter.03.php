@@ -1,6 +1,5 @@
 <?php
-echo '<br>';
-
+echo '<br><div class="start-line">' . basename(__FILE__) . '</div>';
 echo '$middleware_name: ' . $middleware_name . '<br>';
 echo '$middleware_action_name: ' . $middleware_action_name . '<br>';
 echo '$middleware_namespace: ' . $middleware_namespace . '<br>';

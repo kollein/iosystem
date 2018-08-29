@@ -1,5 +1,5 @@
 # DO NOT REMOVE THIS LINE AND THE LINES BELOW ERRORPAGEID:HyduWe
-ErrorDocument 404 /index.php?adapter=error&code=404
+ErrorDocument 404 /404.php
 # DO NOT REMOVE THIS LINE AND THE LINES ABOVE HyduWe:ERRORPAGEID
 
 <IfModule mod_rewrite.c>
@@ -16,8 +16,8 @@ RewriteBase /
 # XHR TARGET ************************************************
 
 #hide extensions when call XHR .php
-RewriteRule ^xhr/([a-z\_]+)/$ xhr/$1.php [QSA,L,NC]
-RewriteRule ^xhr/([a-z]+)/([a-z\_]+)/$ xhr/$1/$2.php [QSA,L,NC]
+# RewriteRule ^xhr/([a-z\_]+)/$ xhr/$1.php [QSA,L,NC]
+# RewriteRule ^xhr/([a-z]+)/([a-z\_]+)/$ xhr/$1/$2.php [QSA,L,NC]
 
 # PAGE TARGET ************************************************
 # use ^([a-z]*) prevent duplicating with : ^(.*)$ http://www.domain.com/$1 [R=301,L]

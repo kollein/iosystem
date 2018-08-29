@@ -21,63 +21,91 @@ class Route
     public static $_middleware_node_syntax = false;
 
     // When a request is called
+    public static $_request_method = false;
     public static $_path_uri = false;
-
-    public static $_routes = [
-        "POST" => [],
-        "GET" => [],
-        "PUT" => [],
-        "DELETE" => [],
+    public static $_route = [
+        "METHOD" => false,
+        "PATH" => false,
+        "CONTROLLER" => false,
+        "MIDDLEWARE" => false,
     ];
+    /*
+     ** LEVEL-OVERHEAD is defined to reduce operation
+     ** It depends on checking of incoming request in every defined-route
+     ** Status:
+     ** 0 : Percentage of loss [0%]
+     ** 7 : Percentage of loss [70%]
+     ** 1 : Percentage of loss [10%]
+     */
+    public static $_summary_overhead = [];
+    public static $_current_overhead_status = 0;
 
-    public function __construct()
+    public static function post($path, $controller_node_syntax = DEFAULT_C_NODE_SYNTAX, $middleware_node_syntax = false)
     {
-
-    }
-
-    public static function post($path, $controller_node_syntax, $middleware_node_syntax = false)
-    {
-        $path = strtolower($path);
-        self::setRoute($path, $controller_node_syntax, $middleware_node_syntax, 'POST');
+        self::$_method = strtoupper(__FUNCTION__);
+        self::prepareRoute($path, $controller_node_syntax, $middleware_node_syntax);
+        return new self;
     }
 
     public static function get($path, $controller_node_syntax = DEFAULT_C_NODE_SYNTAX, $middleware_node_syntax = false)
     {
         self::$_method = strtoupper(__FUNCTION__);
         self::prepareRoute($path, $controller_node_syntax, $middleware_node_syntax);
+        return new self;
+    }
 
-        if (gettype($controller_node_syntax) === 'object') {
+    protected function addOverhead($status)
+    {
+        if ($status > 0) {
 
-            /*
-             ** $controller_node_syntax is callback now and return data, so it has two-way binding mechanism
-             ** Data is null (not return) or an array (return) which to be defined:
-             ** [0]: string : 'controller@action'
-             ** [1]: string : 'middleware@action'
-             */
-            self::cacheCallbackData($controller_node_syntax());
-
-            return new self;
-
+            self::$_current_overhead_status = $status;
+            array_push(self::$_summary_overhead, $status);
+            // RESET AFTER CACHE
+            self::$_path = false;
         } else {
-            echo 'not object';
-            self::setRoute();
 
+            self::$_current_overhead_status = false;
         }
     }
 
     protected function prepareRoute($path, $controller_node_syntax, $middleware_node_syntax)
     {
-        $path = strtolower($path);
+        echo '<br>Route Method : ' . self::$_method . '<br>';
 
-        // cache
-        self::$_path = $path;
-        self::$_controller_node_syntax = self::isControllerNodeSyntax($controller_node_syntax) ? $controller_node_syntax : self::DEFAULT_C_NODE_SYNTAX;
-        self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : false;
+        // Reduce Overhead
+        if (self::$_method !== self::$_request_method) {
+            echo '<br> Stop at method checking : ' . $path . ' <br>';
+            self::addOverhead(1);
+
+        } else {
+
+            $path = strtolower($path);
+
+            // cache
+            self::$_path = $path;
+            self::$_controller_node_syntax = self::isControllerNodeSyntax($controller_node_syntax) ? $controller_node_syntax : self::DEFAULT_C_NODE_SYNTAX;
+            self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : false;
+
+            if (gettype($controller_node_syntax) === 'object') {
+
+                /*
+                 ** $controller_node_syntax is callback now and return data, so it has two-way binding mechanism
+                 ** Data is null (not return) or an array (return) which to be defined:
+                 ** [0]: string : 'controller@action'
+                 ** [1]: string : 'middleware@action'
+                 */
+                self::cacheCallbackData($controller_node_syntax());
+
+            } else {
+
+                self::setRoute();
+            }
+
+        }
     }
 
     protected function setRoute()
     {
-        echo '<br><br><br>VINHNRE' . self::$_controller_node_syntax . '<br><br><br>';
 
         if (self::isValidPath(self::$_path) &&
             self::isControllerNodeSyntax(self::$_controller_node_syntax)
@@ -86,28 +114,44 @@ class Route
             $path = trimForwardSlash(self::$_path);
             $ready_path = self::$_prefix ? self::$_prefix . '/' . $path : $path;
 
-            $route = [
+            // Reduce Overhead
+            $path_pattern = '|' . $ready_path . '|i';
+
+            if (!preg_match($path_pattern, self::$_path_uri)) {
+                echo '<br> Stop Definately In Set Route Function : ' . $ready_path . ' <br>';
+                self::addOverhead(7);
+                return;
+            }
+
+            self::$_route = [
                 "METHOD" => self::$_method,
                 "PATH" => $ready_path,
                 "CONTROLLER" => self::$_controller_node_syntax,
                 "MIDDLEWARE" => self::$_middleware_node_syntax,
             ];
 
-            array_push(self::$_routes[self::$_method], $route);
         }
 
     }
 
-    public static function getRoute($path_uri, $method)
+    public static function cacheRequestURL($path_uri, $method)
+    {
+        self::$_request_method = $method;
+        self::$_path_uri = $path_uri;
+    }
+
+    public static function getRoute($path_uri)
     {
         // Cache $path_uri
         self::$_path_uri = $path_uri;
 
         $result = false;
 
-        foreach (self::$_routes[$method] as $route) {
+        foreach (self::$_routes[self::$_request_method] as $route) {
 
-            if ($route['PATH'] === self::$_path_uri) {
+            $path_pattern = '|^' . $route['PATH'] . '$|i';
+
+            if (preg_match($path_pattern, self::$_path_uri)) {
                 $result = $route;
                 break;
             }
@@ -147,6 +191,13 @@ class Route
 
     public function where($condition)
     {
+
+        if (self::$_current_overhead_status > 0) {
+            echo 'Stop Definately In Where Condition <br>';
+            self::addOverhead(0);
+            return;
+        }
+
         // $_path: has been merged with condition
         self::$_path = join('/', self::mergeCondition($condition));
 

@@ -4,18 +4,25 @@
  ** Then call appropriate Controller
  */
 
-include 'app-routing.config.php';
-
 $_route_uri = $_GET['route'];
 $_explicit_uri = trimForwardSlash($_GET['explicit']);
 $_route_level_uri = $_GET['route_level'];
-$_path_uri = $_route_uri . ($_explicit_uri ? '/' . $_explicit_uri : '');
+$_path_uri = $_route_uri . ($_explicit_uri !== '' ? '/' . $_explicit_uri : '');
 
-$route = Route::getRoute($_path_uri, $_SERVER['REQUEST_METHOD']);
+/*
+ ** Reduce overhead for check current route (request url) in route-array
+ ** Solution will cache $_path_uri before set route into route-array
+ */
+
+Route::cacheRequestURL($_path_uri, $_SERVER['REQUEST_METHOD']);
+
+include 'app-routing.config.php';
+
+$route = Route::$_route;
 
 include './unit-test/app.adapter.01.php';
 
-if ($route) {
+if ($route['METHOD']) {
     /*
      ** Class is Case-Insensitive which has been affected by namespace
      ** In namespace of Classname Variable where the classname is part at the after last backslash

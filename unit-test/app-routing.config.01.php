@@ -1,6 +1,5 @@
 <?php
 echo '<br><div class="start-line">' . basename(__FILE__) . '</div>';
-
-echo '#[app.autoload.php] :: $stack_class: |<br>';
-print_r($stack_class);
+echo '$_summary_overhead: |<br>';
+var_dump(Route::$_summary_overhead);
 echo '<br>';

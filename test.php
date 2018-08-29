@@ -16,3 +16,9 @@ $data = 0;
 if ($data !== null) {
     echo '# null';
 }
+
+$result = preg_match('|^user/info$|i', 'user/infe');
+var_dump($result);
+if ($result) {
+    echo 'pass';
+}
