@@ -2,18 +2,20 @@
 
 namespace controller\user;
 
+use DB;
+
+// use human_model as Model;
+
 class IndexController
 {
 
-    public $_name = 'asdsad';
-
-    public function __construct()
-    {
-        $this->_name = 'vinh';
-    }
-
     public function indexAction()
     {
-        return $this->_name;
+
+        DB::connect();
+        $query = 'SELECT * FROM user';
+        DB::selectQuery($query);
+
+        return DB::$_rendata;
     }
 }

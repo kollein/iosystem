@@ -9,16 +9,15 @@
 
 Route::middleware('UserMiddleware@checkLogin')->group(function () {
     Route::prefix('user')->group(function () {
-        Route::get('info1', 'IndexController@index', 'AdminMiddleware@checkPower1');
-        Route::get('info', 'HumanController@index1');
+        Route::get('info', 'IndexController@index', 'AdminMiddleware@checkPower1');
         Route::get('info1', 'HumanController@index1');
+        Route::get('info3', 'HumanController@index1');
     });
 });
 
-// Route::prefix('user')->group(function () {
-//     Route::get('info', 'humancontroller@index1', 'usermiddleware@checkLogin');
-//     // Route::post('kollein/id', 'human@index1');
-// });
+Route::prefix('user')->group(function () {
+    Route::post('coin', 'humancontroller@index1', 'usermiddleware@checkLogin');
+});
 
 // Route::get('user/info', 'humancontroller@index1', 'usermiddleware@checkLogin');
 

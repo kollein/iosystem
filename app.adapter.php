@@ -25,7 +25,7 @@ include './unit-test/app.adapter.01.php';
 if ($route['METHOD']) {
     /*
      ** Class is Case-Insensitive which has been affected by namespace
-     ** In namespace of Classname Variable where the classname is part at the after last backslash
+     ** In namespace, where the classname is part at the after last backslash
      */
     $authorized['code'] = 0;
     $authorized['message'] = 'Undefined';
@@ -58,7 +58,7 @@ if ($route['METHOD']) {
         $controller_class_name = $controller_namespace . '\\' . $controller_name;
 
         $_OPERATOR_ = new $controller_class_name();
-        echo $_OPERATOR_->$controller_action_name();
+        echo json_encode($_OPERATOR_->$controller_action_name());
 
         include './unit-test/app.adapter.02.php';
 

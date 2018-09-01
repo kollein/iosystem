@@ -2,15 +2,8 @@
 
 // error_reporting(0);
 date_default_timezone_set('UTC');
-$conn = new PDO('mysql:host=localhost;dbname=iosystem', 'root', '12345678');
 
-// error_reporting(0);
-// date_default_timezone_set("Asia/Bangkok");
-// $conn = new PDO('mysql:host=localhost;dbname=iosystem','phanminhhau','923757');
-
-//VERY IMPORTANT TO QUERY AND SHOW TIME
-$conn->exec("set names utf8");
-$conn->query("SET SESSION time_zone = '+7:00'");
+const CONNECTION_INFO = ['mysql:host=localhost;dbname=iosystem', 'root', '12345678'];
 
 /* FULL CURRENT URL */
 // Get HTTP/HTTPS (the possible values for this vary from server to server)
@@ -36,24 +29,6 @@ const URLBASE = '//www.iosystem.com';
 
 // TABLE
 const USER = 'USER';
-const CATES = 'CATES';
-const CATECHILD = 'CATECHILD';
-const BOOK_TRADITIONAL = 'BOOK_TRADITIONAL';
-const BOOK_SHARE = 'BOOK_SHARE';
-const BOOK_PRODUCT = 'BOOK_PRODUCT';
-const BOOK_WHERE = 'BOOK_WHERE';
-const BOOK_INFO = 'BOOK_INFO';
-const TRUSTED_SHOP = 'TRUSTED_SHOP';
-const ORDER_STORE = 'ORDER_STORE';
-const ORDER_HIRING_BUY_SERVICE_STORE = 'ORDER_HIRING_BUY_SERVICE_STORE';
-const REGISTER_PAY_ONE_TIME_SERVICE_STORE = 'REGISTER_PAY_ONE_TIME_SERVICE_STORE';
-const PENDING_ORDER = 'PENDING_ORDER';
-const LIST_BOOK_CASE = 'LIST_BOOK_CASE';
-const LIST_PROVINCE_VIETNAM = 'LIST_PROVINCE_VIETNAM';
-const HELP_QUESTION = 'HELP_QUESTION';
-const MAILTO = 'MAILTO';
-const SYSCACHE = 'SYSCACHE';
-const USER_CACHE = 'USER_CACHE';
 
 // COOKIE USER LOG
 define(USER_COOKIE, $_COOKIE['u']);

@@ -75,7 +75,8 @@ class Route
 
         // Reduce Overhead
         if (self::$_method !== self::$_request_method) {
-            echo '<br> Stop at method checking : ' . $path . ' <br>';
+            $ready_path = self::getReadyPath($path);
+            echo '<br> Stop at method checking : ' . $ready_path . ' <br>';
             self::addOverhead(1);
 
         } else {
@@ -107,6 +108,11 @@ class Route
         }
     }
 
+    protected function getReadyPath($path)
+    {
+        return self::$_prefix ? self::$_prefix . '/' . $path : $path;
+    }
+
     protected function setRoute()
     {
 
@@ -115,7 +121,7 @@ class Route
         ) {
 
             $path = trimForwardSlash(self::$_path);
-            $ready_path = self::$_prefix ? self::$_prefix . '/' . $path : $path;
+            $ready_path = self::getReadyPath($path);
 
             // Reduce Overhead
             $path_pattern = '|^' . $ready_path . '$|i';
@@ -141,27 +147,6 @@ class Route
     {
         self::$_request_method = $method;
         self::$_path_uri = $path_uri;
-    }
-
-    public static function getRoute($path_uri)
-    {
-        // Cache $path_uri
-        self::$_path_uri = $path_uri;
-
-        $result = false;
-
-        foreach (self::$_routes[self::$_request_method] as $route) {
-
-            $path_pattern = '|^' . $route['PATH'] . '$|i';
-
-            if (preg_match($path_pattern, self::$_path_uri)) {
-                $result = $route;
-                break;
-            }
-
-        }
-
-        return $result;
     }
 
     protected function isValidPath($path)

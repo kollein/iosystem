@@ -35,7 +35,12 @@ function __autoload($class)
              */
             $ready_path = $store_name . '/' . preg_replace('|middleware$|', '', $stack_class[1]) . '.middleware.php';
             break;
-
+        case 'db':
+            $ready_path = 'module/db.module.php';
+            break;
+        case preg_match('|_model$|i', $store_name) !== 0:
+            $ready_path = 'model/' . preg_replace('|_model$|', '', $store_name) . '.model.php';
+            break;
         default:
             $ready_path = '404.php';
             break;
