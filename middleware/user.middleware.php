@@ -1,6 +1,6 @@
 <?php
 
-namespace middleware\usermiddleware;
+namespace middleware\UserMiddleware;
 
 class UserMiddleware
 {
@@ -9,7 +9,7 @@ class UserMiddleware
     public function checkLoginAction()
     {
         $authorized['code'] = 1;
-        $authorized['message'] = 'Ok, You has logged!';
+        $authorized['message'] = 'Ok, You have logged!';
         return $authorized;
     }
 

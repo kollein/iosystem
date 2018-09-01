@@ -19,6 +19,7 @@ class Route
     public static $_path = false;
     public static $_controller_node_syntax = false;
     public static $_middleware_node_syntax = false;
+    public static $_middleware_node_syntax_prefix = false;
 
     // When a request is called
     public static $_request_method = false;
@@ -83,8 +84,10 @@ class Route
 
             // cache
             self::$_path = $path;
+
             self::$_controller_node_syntax = self::isControllerNodeSyntax($controller_node_syntax) ? $controller_node_syntax : self::DEFAULT_C_NODE_SYNTAX;
-            self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : false;
+
+            self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : self::$_middleware_node_syntax_prefix;
 
             if (gettype($controller_node_syntax) === 'object') {
 
@@ -115,10 +118,10 @@ class Route
             $ready_path = self::$_prefix ? self::$_prefix . '/' . $path : $path;
 
             // Reduce Overhead
-            $path_pattern = '|' . $ready_path . '|i';
+            $path_pattern = '|^' . $ready_path . '$|i';
 
             if (!preg_match($path_pattern, self::$_path_uri)) {
-                echo '<br> Stop Definately In Set Route Function : ' . $ready_path . ' <br>';
+                echo '<br> Stop Definately In Set Route Function (NOT MATCH) : ' . $ready_path . ' <br>';
                 self::addOverhead(7);
                 return;
             }
@@ -182,11 +185,18 @@ class Route
         return new self;
     }
 
+    public static function middleware($middleware_node_syntax)
+    {
+        self::$_middleware_node_syntax_prefix = self::isMiddlewareNodeSyntax($middleware_node_syntax) ? $middleware_node_syntax : false;
+        return new self;
+    }
+
     public function group($callback)
     {
         $callback();
         // RESET
         self::$_prefix = false;
+        self::$_middleware_node_syntax_prefix = false;
     }
 
     public function where($condition)

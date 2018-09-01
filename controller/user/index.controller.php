@@ -12,7 +12,7 @@ class IndexController
         $this->_name = 'vinh';
     }
 
-    public function index()
+    public function indexAction()
     {
         return $this->_name;
     }
