@@ -57,16 +57,11 @@ class Route
 
     protected function addOverhead($status)
     {
-        if ($status > 0) {
-
-            self::$_current_overhead_status = $status;
-            array_push(self::$_summary_overhead, $status);
-            // RESET AFTER CACHE
-            self::$_path = false;
-        } else {
-
-            self::$_current_overhead_status = false;
-        }
+        self::$_current_overhead_status = $status;
+        array_push(self::$_summary_overhead, $status);
+        // RESET AFTER CACHED
+        self::$_path = false;
+        self::$_current_overhead_status = false;
     }
 
     protected function prepareRoute($path, $controller_node_syntax, $middleware_node_syntax)
@@ -76,7 +71,7 @@ class Route
         // Reduce Overhead
         if (self::$_method !== self::$_request_method) {
             $ready_path = self::getReadyPath($path);
-            echo '<br> Stop at method checking : ' . $ready_path . ' <br>';
+            echo 'Stop At Route Method Checking : ' . $ready_path . ' <br>';
             self::addOverhead(1);
 
         } else {
@@ -93,7 +88,8 @@ class Route
             if (gettype($controller_node_syntax) === 'object') {
 
                 /*
-                 ** $controller_node_syntax is callback now and return data, so it has two-way binding mechanism
+                 ** $controller_node_syntax is callback now and return data
+                 ** So it has two-way binding mechanism
                  ** Data is null (not return) or an array (return) which to be defined:
                  ** [0]: string : 'controller@action'
                  ** [1]: string : 'middleware@action'
@@ -115,16 +111,18 @@ class Route
 
     protected function setRoute()
     {
-
-        if (self::isValidPath(self::$_path) &&
-            self::isControllerNodeSyntax(self::$_controller_node_syntax)
-        ) {
+        if (!self::$_route['METHOD']) {
 
             $path = trimForwardSlash(self::$_path);
             $ready_path = self::getReadyPath($path);
-
+            echo 'Ready Path: ' . $ready_path . '<br>';
             // Reduce Overhead
             $path_pattern = '|^' . $ready_path . '$|i';
+
+            echo self::$_method . '<br>';
+            echo self::$_path . '<br>';
+            echo self::$_controller_node_syntax . '<br>';
+            echo self::$_middleware_node_syntax . '<br>';
 
             if (!preg_match($path_pattern, self::$_path_uri)) {
                 echo '<br> Stop Definately In Set Route Function (NOT MATCH) : ' . $ready_path . ' <br>';
@@ -139,6 +137,11 @@ class Route
                 "MIDDLEWARE" => self::$_middleware_node_syntax,
             ];
 
+            echo 'Route is activated! <br>';
+
+        } else {
+
+            echo 'Sorry, Another Route has been activated before! <br>';
         }
 
     }
@@ -151,7 +154,7 @@ class Route
 
     protected function isValidPath($path)
     {
-        return preg_match("|^[^'\"]+$|i", $path);
+        return preg_match("|[^'\"]+|i", $path);
     }
 
     protected function isControllerNodeSyntax($mixed)
@@ -187,19 +190,13 @@ class Route
     public function where($condition)
     {
 
-        if (self::$_current_overhead_status > 0) {
-            echo 'Stop Definately In Where Condition <br>';
-            self::addOverhead(0);
+        if (self::$_route['METHOD']) {
+            echo 'Stop Definately In Where Condition : ' . join('/', $condition) . '<br>';
             return;
         }
 
         // $_path: has been merged with condition
         self::$_path = join('/', self::mergeCondition($condition));
-
-        echo self::$_method . '<br>';
-        echo self::$_path . '<br>';
-        echo self::$_controller_node_syntax . '<br>';
-        echo self::$_middleware_node_syntax . '<br>';
 
         self::setRoute();
 
@@ -237,6 +234,7 @@ class Route
             self::$_controller_node_syntax = self::isControllerNodeSyntax($data['controller']) ? $data['controller'] : self::DEFAULT_C_NODE_SYNTAX;
 
             self::$_middleware_node_syntax = self::isMiddlewareNodeSyntax($data['middleware']) ? $data['middleware'] : false;
+
         }
     }
 

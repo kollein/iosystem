@@ -12,7 +12,7 @@ class DB
 
             $conn = new PDO($connection_info[0], $connection_info[1], $connection_info[2]);
             $conn->exec("set names utf8");
-            $conn->query("SET SESSION time_zone = '+7:00'");
+            $conn->query(SESSION_TIMEZONE);
             self::$_conn = $conn;
 
         } catch (Exception $e) {
@@ -25,19 +25,12 @@ class DB
     {
         $stmt = self::$_conn->query($query);
         self::$_rendata = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     }
 
     public static function insert($query, $return_data = false)
     {
         self::$_conn->exec($query);
-        $lastId = self::$_conn->lastInsertId();
-
-        if ($return_data === true) {
-            self::$_rendata = $lastId . "," . $col_value;
-        } else {
-            self::$_rendata = $lastId;
-        }
+        self::$_rendata = self::$_conn->lastInsertId();
     }
 
     public static function affect($query)

@@ -11,10 +11,8 @@ class IndexController
     {
         DB::connect();
 
-        $query = "UPDATE user SET Host = 'matbao3333' WHERE User = 'root'";
-        DB::update($query);
-        echo json_encode(DB::$_rendata);
-
+        $query = "DELETE FROM user WHERE Host = 'matbao 123'";
+        DB::affect($query, true);
         return DB::$_rendata;
     }
 }

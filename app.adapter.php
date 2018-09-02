@@ -52,17 +52,17 @@ if ($route['METHOD']) {
     // Check Authorization Result
     if ($authorized['code'] === 1) {
 
+        echo '<br>' . $authorized['message'] . '<br>';
+
         $controller_name = Adapter::getAddressBefore($route['CONTROLLER']);
         $controller_action_name = Adapter::getAddressAfter($route['CONTROLLER']) . 'Action';
         $controller_namespace = 'controller\\' . $_route_uri;
         $controller_class_name = $controller_namespace . '\\' . $controller_name;
 
         $_OPERATOR_ = new $controller_class_name();
-        echo json_encode($_OPERATOR_->$controller_action_name());
-
         include './unit-test/app.adapter.02.php';
 
-        echo $authorized['message'];
+        echo json_encode($_OPERATOR_->$controller_action_name());
 
     } else {
 
